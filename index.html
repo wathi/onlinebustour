@@ -177,21 +177,22 @@
             <td class="text-center"><img class="img-sm" src="${product.imageUrl}" alt=""></td>
             <td class="text-center">${product.origin_price}${currency}</td>   
             <td class="text-center"></td>
-            <td class="text-center"><button>Edit</button></td>     
-            <td class="text-center"><button>Delete</button></td>     
+            <td class="text-center"><button id="${product.id}-edit" class="edit-product">Edit</button></td>     
+            <td class="text-center"><button id="${product.id}-delete" class="delete-product">Delete</button></td>     
         </tr>    
         `
       });
       app.innerHTML = `
       <h3 class="text-center">後台管理</h3>
-      <div id="backend container">
+      <div id="backend">
+        <button id="add-product" class="mb-2" type="button">新增</button>
         <table>
             <tr>
-              <th class="text-center">Name</th>
-              <th class="text-center">Description</th>
-              <th class="text-center">Image</th>
-              <th class="text-center">Original Price</th>
-              <th class="text-center">Current Price</th>
+              <th class="text-center">名稱</th>
+              <th class="text-center">說明</th>
+              <th class="text-center">圖片</th>
+              <th class="text-center">原價</th>
+              <th class="text-center">現價</th>
               <th></th>
               <th></th>
             </tr>
@@ -199,6 +200,22 @@
         </table>        
       </div>
       `;
+      const addProductBtn = document.getElementById('add-product');
+      addProductBtn.addEventListener('click', (e) => {
+        addProduct();
+      })
+    }
+
+    const addProduct = () => {
+      console.log("add product");
+    }
+
+    const editProduct = () => {
+
+    }
+
+    const deleteProduct = () => {
+      
     }
 
     const logout = () => {
