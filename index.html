@@ -22,10 +22,10 @@
       <div class="nav-right">
         <ul class="flex">
           <li class="list-style-none py-2">
-            <button id="login" class="button-link">登入</button>
+            <button id="login" class="button-link">後台管理</button>
           </li>
           <li class="list-style-none py-2">
-            <a id="register" class="text-decoration-none" href="">用戶注冊</a>
+            <button id="logout" class="button-link">登出</button>
           </li>
         </ul>
       </div>
@@ -37,9 +37,11 @@
 
 
   <script>
+    const app = document.getElementById('app');
     const logoBtn = document.getElementById('logo');
     const loginBtn = document.getElementById('login');
     const registerBtn = document.getElementById('register');
+    const logoutBtn = document.getElementById('logout');
 
     logoBtn.addEventListener('click', (e) => {
       showProductPage();
@@ -47,12 +49,18 @@
 
     loginBtn.addEventListener('click', (e) => {
       clear();
-      showLoginPage();
+      login();
     });
 
+    logoutBtn.addEventListener('click', (e) => {
+      logout();
+    });
+
+    // Api Info
     const apiUrl = 'https://vue3-course-api.hexschool.io';
     const apiPath = 'bustour';
 
+    // No auth show all products
     const showProductPage = () => {
       axios.get(`${apiUrl}/api/${apiPath}/products/`)
       .then(function (res) {
@@ -65,21 +73,19 @@
       });
     }
     
+    //Show Product as card
     const showProduct = (products) => {
       let list = '';
       const currency = "日元";
       products.forEach((product) => {
         list += `
-
           <div class="py-2">
             <img class="img-md" src="${product.imageUrl}" alt="">
             <h3>${product.content}</h3>
             <p>價格: ${product.origin_price}${currency}</p>
           </div>
         `
-        console.log(product)
       });
-      console.log(list);
       document.getElementById('app').innerHTML = `
       <h3 class="text-center">旅遊計劃</h3>
       <div id="show-product" class="flex">
@@ -88,11 +94,31 @@
       `;
     }
 
+    //Login
+    const login = () => {
+      let token = document.cookie.replace(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+      axios.defaults.headers.common['Authorization'] = token;
+
+      axios.post(`${apiUrl}/api/user/check`)
+      .then((res) => {
+        if(res.data.success){
+          showBackendPage();
+        } else {
+          showLoginPage();
+        };
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    }
+
+    // Draw Login Page
     const showLoginPage = () => {
       let str = '';
       str = `
-        <div class="container flex flex-direction-column align-items-center">
+        <div class="flex flex-direction-column align-items-center">
           <h3 class="text-center mb-2">登入</h3>
+          <div class="error-msg"></div>
           <form class="flex flex-direction-column">
             <label for="username">Username</label>
             <input id="username" class="mb-2 p-05" name="username" type="email">
@@ -102,39 +128,103 @@
           </form>
         </div>
       `;
-      document.getElementById('app').innerHTML = `${str}`;
+      app.innerHTML = `${str}`;
       const submitLoginBtn = document.getElementById('submit-login');
 
       submitLoginBtn.addEventListener('click', (e) => {
-      authLogin();
-    });
+        authLogin();
+      });
     }
 
+    //Auth Login username and password
     const authLogin = () => {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
-      const user = {username, password}
-      console.log(user);
-      axios.post(`${apiUrl}/admin/signin/`, user)
-      .then(function (res) {
+      axios.post(`${apiUrl}/admin/signin/`, { username, password })
+      .then((res) => {
         console.log(res);
+        if(res.data.success){
+          showBackendPage();
+          document.cookie = `OnlineBusTour=${res.data.token}; expires=${new Date(res.data.expired)}`;
+        }
       })
-      .catch(function (err) {
+      .catch((err) => {
         console.log(err.response.data);
       });
-
     }
 
+    //Get Product by API if logged in
+    const showBackendPage = () => {
+      axios.get(`${apiUrl}/api/${apiPath}/admin/products/`)
+      .then((res) => {
+        showBackendList(res.data.products);
+      })
+      .catch((err) => {
+        console.log(err);
+        apiError();
+      });
+    }
+
+    //Show product as list with edit and delete button
+    const showBackendList = (products) => {
+      let list = '';
+      const currency = "日元";
+      products.forEach((product) => {
+        list += `
+        <tr>
+            <td class="text-center"><h3>${product.content}</h3></td>
+            <td class="text-center"></td>
+            <td class="text-center"><img class="img-sm" src="${product.imageUrl}" alt=""></td>
+            <td class="text-center">${product.origin_price}${currency}</td>   
+            <td class="text-center"></td>
+            <td class="text-center"><button>Edit</button></td>     
+            <td class="text-center"><button>Delete</button></td>     
+        </tr>    
+        `
+      });
+      app.innerHTML = `
+      <h3 class="text-center">後台管理</h3>
+      <div id="backend container">
+        <table>
+            <tr>
+              <th class="text-center">Name</th>
+              <th class="text-center">Description</th>
+              <th class="text-center">Image</th>
+              <th class="text-center">Original Price</th>
+              <th class="text-center">Current Price</th>
+              <th></th>
+              <th></th>
+            </tr>
+            ${list}
+        </table>        
+      </div>
+      `;
+    }
+
+    const logout = () => {
+      axios.post(`${apiUrl}/logout/`)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      
+    }
+
+    //Show error message if cannot get any content
     const apiError = () => {
-      document.getElementById('app').innerHTML = `
+      app.innerHTML = `
       <h3 class="text-center">無法顯示內容</h3>
       `;      
     }
 
+    //Clear everything in #app
     const clear = () => {
-      document.getElementById('app').innerText = "";
+      app.innerText = "";
     }
 
+    //run by default
     showProductPage();
 
   </script>
