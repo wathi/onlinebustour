@@ -79,3 +79,7 @@ form {
   background: none;
   cursor: pointer;
 }
+
+.button-link:hover {
+  color: #666;
+}
