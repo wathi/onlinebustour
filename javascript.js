@@ -33,7 +33,7 @@ const app = {
         });
     },
     checkLogin: function(){
-        let token = document.cookie.replace`(/(?:(?:^|.*;\s*)${cookiename}\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
+        let token = document.cookie.replace`(/(?:(?:^|.*;\s*)${this.cookiename}\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
         axios.defaults.headers.common['Authorization'] = token;
       
         axios.post(`${this.apiUrl}/api/user/check`)
@@ -80,7 +80,7 @@ const app = {
         .then((res) => {
           console.log(res.data);
           if(res.data.success){
-            document.cookie = `${cookiename}=${res.data.token}; expires=${new Date(res.data.expired)}`;
+            document.cookie = `${this.cookiename}=${res.data.token}; expires=${new Date(res.data.expired)}`;
             this.getProductAdmin();
             console.log("login success")
           } 
@@ -232,7 +232,7 @@ const app = {
 			.then((res) => {
 				console.log(res.data)
 				if(res.data.success){
-          document.cookie = `${cookiename} = ; expires = ${new Date()}`;
+          document.cookie = `${this.cookiename} = ; expires = ${new Date()}`;
 					this.showAdminLogin();
 				}
 			})
