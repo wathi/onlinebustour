@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Style CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- Vue3 -->
+  <script src="https://unpkg.com/vue@next"></script>
+
+  <title>Online Bus Tour</title>
+</head>
+<body>
+  <nav>
+    <div class="container flex space-between align-items-center">
+      <div class="nav-left">
+        <button id="logo" class="button-link">Online Bus Tour</button>
+      </div>
+      <div class="nav-right">
+        <ul class="flex">
+          <li class="list-style-none py-2">
+            <button id="login" class="button-link">後台管理</button>
+          </li>
+          <li class="list-style-none py-2">
+            <button id="logout" class="button-link">登出</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <main>
+    <div id="admin" class="container">
+
+      <div id="admin-login" class="flex flex-direction-column align-items-center" v-if="!isLoggedIn">
+        <h3 class="text-center mb-2">登入</h3>
+        <div class="error-msg"></div>
+        <form class="flex flex-direction-column">
+            <label for="username">用戶名</label>
+            <input id="username" class="mb-2 p-05" name="username" type="email" v-model="logginUser.username">
+            <label for="password">密碼</label>
+            <input id="password" class="mb-2 p-05" name="password" type="password" v-model="logginUser.password">
+            <button id="submit-login" class="p-05" type="button" v-on:click="authLogin">登入</button>
+        </form>
+      </div>
+
+      
+      <div id="backend" v-if="isLoggedIn">
+        <h3 class="text-center">後台管理</h3>
+        <button id="add-product" class="mb-2" type="button">新增</button>
+
+        <div id="admin-product" class="flex flex-center" >
+
+          <table>
+            <thead>
+              <tr>
+                <th class="text-center">名稱</th>
+                <th class="text-center">說明</th>
+                <th class="text-center">圖片</th>
+                <th class="text-center">原價</th>
+                <th class="text-center">現價</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-for="product in products" :key="product.id">
+                <tr>
+                  <td class="text-center"><h3>{{ product.content }}</h3></td>
+                  <td class="text-center">{{ product.description }}</td>
+                  <td class="text-center"><img class="img-sm" :src="product.imageUrl" alt=""></td>
+                  <td class="text-center">{{ product.origin_price }}{{ currency }}</td>   
+                  <td class="text-center">{{ product.price }}{{ currency }}</td>
+                  <td class="text-center"><button value="product.id" class="edit-product">修改</button></td>     
+                  <td class="text-center"><button value="product.id" class="delete-product">刪除</button></td>     
+
+                </tr>
+              </template> 
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add Product -->
+        <div class="flex flex-direction-column align-items-center">
+					<h3 class="text-center mb-2">產品</h3>
+					<div class="error-msg"></div>
+					<form class="flex flex-direction-column">
+            <label for="category">分類</label>
+						<input id="category" class="mb-2 p-05" name="category" type="text" v-model="tempProduct.category" required>
+            <label for="content">內容</label>
+						<input id="content" class="mb-2 p-05" name="content" type="text" v-model="tempProduct.content" required>
+						<label for="description">說明</label>
+						<input id="description" class="mb-2 p-05" name="description" type="text" v-model="tempProduct.description" required>
+            <label for="is_enable">是否啟用</label>
+            <input id="is_enable" type="checkbox" v-model="tempProduct.is_enabled">
+            <label for="origin_price">原價</label>
+						<input id="origin_price" class="mb-2 p-05" name="origin_price" type="number" v-model="tempProduct.original_price" required>
+						<label for="price">現價</label>
+						<input id="price" class="mb-2 p-05" name="price" type="number" v-model="tempProduct.price">
+						<label for="title">標題</label>
+						<input id="title" class="mb-2 p-05" name="title" type="text" v-model="tempProduct.title" required>
+						<label for="unit">單位</label>
+						<input id="unit" class="mb-2 p-05" name="unit" type="text" v-model="tempProduct.unit">
+						<label for="imageUrl">圖片地址</label>
+						<input id="imageUrl" class="mb-2 p-05" name="imageUrl" type="url" v-model="tempProduct.imageUrl">
+						<button id="add" class="p-05" type="button" @click="addProduct">確定</button>
+					</form>
+				</div>
+  
+    </div>    
+  </main>
+  <script type="text/javascript" src="admin.js"></script>
+</body>
+</html>

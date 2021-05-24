@@ -29,6 +29,10 @@ form {
   justify-content: space-around; 
 }
 
+.flex-center {
+  justify-content: center; 
+}
+
 .align-items-center {
   align-items: center;
 }
@@ -82,4 +86,9 @@ form {
 
 .button-link:hover {
   color: #666;
+}
+
+/* Table */
+th,td {
+  width: 5rem;
 }
