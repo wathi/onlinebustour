@@ -52,7 +52,7 @@
       
       <div id="backend" v-if="isLoggedIn">
         <h3 class="text-center">後台管理</h3>
-        <button id="add-product" class="mb-2" type="button">新增</button>
+        <button id="add-product" class="mb-2" type="button" @click="showAddProductForm">新增</button>
 
         <div id="admin-product" class="flex flex-center" >
 
@@ -76,8 +76,8 @@
                   <td class="text-center"><img class="img-sm" :src="product.imageUrl" alt=""></td>
                   <td class="text-center">{{ product.origin_price }}{{ currency }}</td>   
                   <td class="text-center">{{ product.price }}{{ currency }}</td>
-                  <td class="text-center"><button value="product.id" class="edit-product">修改</button></td>     
-                  <td class="text-center"><button value="product.id" class="delete-product">刪除</button></td>     
+                  <td class="text-center"><button value="product.id" class="edit-product" @click="getEditProduct(product)">修改</button></td>     
+                  <td class="text-center"><button value="product.id" class="delete-product" @click="deleteProduct(product.id)">刪除</button></td>     
 
                 </tr>
               </template> 
@@ -86,31 +86,98 @@
         </div>
 
         <!-- Add Product -->
-        <div class="flex flex-direction-column align-items-center">
-					<h3 class="text-center mb-2">產品</h3>
+        <div id="add-product-form" class="flex flex-direction-column align-items-center overlay-form" v-if="addProductFormShow">
+          <div class="close-btn" @click="hideAddProductForm">&times;</div>
+					<h3 class="text-center mb-2 ">新增產品</h3>
 					<div class="error-msg"></div>
-					<form class="flex flex-direction-column">
-            <label for="category">分類</label>
-						<input id="category" class="mb-2 p-05" name="category" type="text" v-model="tempProduct.category" required>
-            <label for="content">內容</label>
-						<input id="content" class="mb-2 p-05" name="content" type="text" v-model="tempProduct.content" required>
-						<label for="description">說明</label>
-						<input id="description" class="mb-2 p-05" name="description" type="text" v-model="tempProduct.description" required>
-            <label for="is_enable">是否啟用</label>
-            <input id="is_enable" type="checkbox" v-model="tempProduct.is_enabled">
-            <label for="origin_price">原價</label>
-						<input id="origin_price" class="mb-2 p-05" name="origin_price" type="number" v-model="tempProduct.original_price" required>
-						<label for="price">現價</label>
-						<input id="price" class="mb-2 p-05" name="price" type="number" v-model="tempProduct.price">
-						<label for="title">標題</label>
-						<input id="title" class="mb-2 p-05" name="title" type="text" v-model="tempProduct.title" required>
-						<label for="unit">單位</label>
-						<input id="unit" class="mb-2 p-05" name="unit" type="text" v-model="tempProduct.unit">
-						<label for="imageUrl">圖片地址</label>
-						<input id="imageUrl" class="mb-2 p-05" name="imageUrl" type="url" v-model="tempProduct.imageUrl">
+					<form class="grid">
+            <div>
+              <label for="category">分類</label>
+              <input id="category" class="input mb-2 p-05" name="category" type="text" v-model="tempProduct.category" required>  
+            </div>
+            <div>
+              <label for="content">內容</label>
+              <input id="content" class="mb-2 p-05" name="content" type="text" v-model="tempProduct.content" required>  
+            </div>
+            <div>
+              <label for="description">說明</label>
+              <input id="description" class="mb-2 p-05" name="description" type="text" v-model="tempProduct.description" required>  
+            </div>
+            <div>
+              <label for="origin_price">原價</label>
+              <input id="origin_price" class="mb-2 p-05" name="origin_price" type="number" v-model="tempProduct.origin_price" required>
+            </div>
+            <div>
+              <label for="price">現價</label>
+              <input id="price" class="mb-2 p-05" name="price" type="number" v-model="tempProduct.price">  
+            </div>
+            <div>
+              <label for="title">標題</label>
+              <input id="title" class="mb-2 p-05" name="title" type="text" v-model="tempProduct.title" required>
+            </div>
+            <div>
+              <label for="unit">單位</label>
+              <input id="unit" class="mb-2 p-05" name="unit" type="text" v-model="tempProduct.unit">
+            </div>
+            <div>
+              <label for="imageUrl">圖片地址</label>
+              <input id="imageUrl" class="mb-2 p-05" name="imageUrl" type="url" v-model="tempProduct.imageUrl">  
+            </div>
+            <div>
+              <label for="is_enable">是否啟用</label>
+              <input id="is_enable" type="checkbox" v-model="tempProduct.is_enabled">
+            </div>
+            <button id="add" class="p-05" type="button" @click="hideAddProductForm">返回</button>
 						<button id="add" class="p-05" type="button" @click="addProduct">確定</button>
 					</form>
 				</div>
+
+                <!-- Edit Product -->
+                <div id="edit-product-form" class="flex flex-direction-column align-items-center overlay-form" v-if="editProductFormShow">
+                  <div class="close-btn" @click="clearEditProductForm">&times;</div>
+                  <h3 class="text-center mb-2 ">修改產品內容</h3>
+                  <div class="error-msg"></div>
+                  <form class="grid">
+                    <div>
+                      <label for="category">分類</label>
+                      <input id="category" class="mb-2 p-05" name="category" type="text" v-model="tempProduct.category" required>  
+                    </div>
+                    <div>
+                      <label for="content">內容</label>
+                      <input id="content" class="mb-2 p-05" name="content" type="text" v-model="tempProduct.content" required>  
+                    </div>
+                    <div>
+                      <label for="description">說明</label>
+                      <input id="description" class="mb-2 p-05" name="description" type="text" v-model="tempProduct.description" required>  
+                    </div>
+                    <div>
+                      <label for="origin_price">原價</label>
+                      <input id="origin_price" class="mb-2 p-05" name="origin_price" type="number" v-model="tempProduct.origin_price" required>
+                    </div>
+                    <div>
+                      <label for="price">現價</label>
+                      <input id="price" class="mb-2 p-05" name="price" type="number" v-model="tempProduct.price">  
+                    </div>
+                    <div>
+                      <label for="title">標題</label>
+                      <input id="title" class="mb-2 p-05" name="title" type="text" v-model="tempProduct.title" required>
+                    </div>
+                    <div>
+                      <label for="unit">單位</label>
+                      <input id="unit" class="mb-2 p-05" name="unit" type="text" v-model="tempProduct.unit">
+                    </div>
+                    <div>
+                      <label for="imageUrl">圖片地址</label>
+                      <input id="imageUrl" class="mb-2 p-05" name="imageUrl" type="url" v-model="tempProduct.imageUrl">  
+                    </div>
+                    <div>
+                      <label for="is_enable">是否啟用</label>
+                      <input id="is_enable" type="checkbox" v-model="tempProduct.is_enabled">
+                    </div>
+                    <button id="add" class="p-05" type="button" @click="clearEditProductForm">返回</button>
+                    <button id="add" class="p-05" type="button" @click="editProduct">確定</button>
+                  </form>
+                </div>
   
     </div>    
   </main>

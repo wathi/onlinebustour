@@ -41,6 +41,12 @@ form {
   flex-direction: column;
 }
 
+.grid {
+  display: grid;
+  column-gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
 /* Decoration */
 .text-decoration-none {
   text-decoration: none;
@@ -74,6 +80,15 @@ form {
   padding-right: 2rem;
 }
 
+/* Width & Height */
+.w-10 {
+  width: 10rem;
+}
+
+.w-15 {
+  width: 15rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -91,4 +106,29 @@ form {
 /* Table */
 th,td {
   width: 5rem;
+}
+
+/* Overlay Form */
+.overlay-form {
+  position: absolute;
+  top:0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  color: #FFF;
+  z-index: 2;
+  opacity: 1;
+  /* padding: 6px; */
+
+}
+
+.overlay-form .close-btn {
+  position: absolute;
+  /* top: 2rem; */
+  right: 6rem;
+  color: #FFF;
+  font-weight: 600;
+  font-size: 2rem;
+  cursor: pointer;
 }
