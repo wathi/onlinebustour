@@ -55,7 +55,7 @@ const admin = Vue.createApp({
     },
     authLogin: function(){
       console.log("authloggin", this.logginUser)
-      axios.post(`${this.apiUrl}/admin/signin/`, this.logginUser)
+      axios.post(`${this.apiUrl}/admin/signin`, this.logginUser)
       .then((res) => {
         console.log(res.data);
         if(res.data.success){
@@ -99,7 +99,7 @@ const admin = Vue.createApp({
     addProduct: function(){
       this.tokenToHeader();
 
-			axios.post(`${this.apiUrl}/api/${this.apiPath}/admin/product/`, {
+			axios.post(`${this.apiUrl}/api/${this.apiPath}/admin/product`, {
 				data: {
 					title: this.tempProduct.title, 
 					category: this.tempProduct.category,
@@ -167,24 +167,29 @@ const admin = Vue.createApp({
 				console.log(err.response.data);
 			});
     },
-    adminLogout: function(){
-
-    },
-    clear: function(){
-
-    },
-    render: function(){
-      this.isLoggedIn = true;
+    adminLogout: function (){
+			axios.post(`${this.apiUrl}/logout/`)
+			.then((res) => {
+				console.log(res.data)
+				if(res.data.success){
+          document.cookie = `OnlineBusTour = ; expires = ${new Date()}`;
+				}
+			})
+			.catch((err) => {
+				console.log(err.response.data);
+			});
     },
     tokenToHeader: function(){
       let token = document.cookie.replace`(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
       axios.defaults.headers.common['Authorization'] = token;
-    }
+    },
+    render: function(){
+      this.isLoggedIn = true;
+    },
   },
   created(){
     this.checkLogin();
     // this.render();
-    // this.getProductAdmin()
   }
 })
 
