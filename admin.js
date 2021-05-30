@@ -10,10 +10,6 @@ const admin = Vue.createApp({
       addProductFormShow: false,
       editProductFormShow: false,
       logginUser:{},
-      emptyUser:{
-        username: "",
-        password: ""
-      },
       tempProduct:{},
       emptyProduct:{
         category: "",
@@ -31,28 +27,7 @@ const admin = Vue.createApp({
     }
   },
   methods: {
-    checkLogin: function(){
-      let token = document.cookie.replace`(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
-      axios.defaults.headers.common['Authorization'] = token;
-    
-      axios.post(`${this.apiUrl}/api/user/check`)
-      .then((res) => {
-        if(res.data.success){
-            console.log(res.data);
-            console.log("check success");
-            this.isLoggedIn = true;
-        } else {
-          console.log(res.data);
-          console.log("check fail");
-          this.isLoggedIn = false;
-        };
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    },
-    showAdminLogin: function(){
-    },
+
     authLogin: function(){
       console.log("authloggin", this.logginUser)
       axios.post(`${this.apiUrl}/admin/signin`, this.logginUser)
@@ -167,6 +142,56 @@ const admin = Vue.createApp({
 				console.log(err.response.data);
 			});
     },
+
+    render: function(){
+      this.isLoggedIn = true;
+    },
+  },
+  mounted(){
+    let token = document.cookie.replace`(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
+    axios.defaults.headers.common['Authorization'] = token;
+  
+    axios.post(`${this.apiUrl}/api/user/check`)
+    .then((res) => {
+      if(res.data.success){
+          console.log(res.data);
+          console.log("check success");
+      } else {
+        console.log(res.data);
+        console.log("check fail");
+      };
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+})
+
+admin.component('nav-bar',{
+  template: `
+    <nav>
+      <div class="container flex space-between align-items-center">
+        <div class="nav-left">
+          <button id="logo" class="button-link">Online Bus Tour</button>
+        </div>
+        <div class="nav-right">
+          <ul class="flex">
+            <li class="list-style-none py-2">
+              <button id="login" class="button-link">後台管理</button>
+            </li>
+            <li class="list-style-none py-2">
+              <button id="logout" class="button-link" @click="adminLogout">登出</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  `,
+  data(){
+    //return 
+  },
+  props: ['apiUrl'],
+  methods:{
     adminLogout: function (){
 			axios.post(`${this.apiUrl}/logout/`)
 			.then((res) => {
@@ -179,18 +204,125 @@ const admin = Vue.createApp({
 				console.log(err.response.data);
 			});
     },
-    tokenToHeader: function(){
-      let token = document.cookie.replace`(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
-      axios.defaults.headers.common['Authorization'] = token;
-    },
-    render: function(){
-      this.isLoggedIn = true;
-    },
-  },
-  created(){
-    this.checkLogin();
-    // this.render();
   }
 })
+
+admin.component('login-admin',{
+  template: `
+    <div id="admin-login" class="flex flex-direction-column align-items-center">
+      <h3 class="text-center mb-2">登入</h3>
+      <div class="error-msg"></div>
+      <form class="flex flex-direction-column">
+          <label for="username">用戶名</label>
+          <input id="username" class="mb-2 p-05" name="username" type="email" v-model="logginUser.username">
+          <label for="password">密碼</label>
+          <input id="password" class="mb-2 p-05" name="password" type="password" v-model="logginUser.password">
+          <submit-btn btn-id="submit-login" class="p-05" type="button" v-on:click="authLogin" btn-name="登入"></submit-btn>
+      </form>
+    </div>
+  `,
+  data(){
+    return {
+    }
+  },
+  props:[],
+  methods:{
+    
+  }
+})
+
+admin.component('get-product-admin',{
+  template: ``,
+  data(){
+    //return
+  },
+  props:[],
+  methods:{
+    
+  }
+})
+
+admin.component('add-product',{
+  template: ``,
+  data(){
+    //return
+  },
+  props:[],
+  methods:{
+
+  }
+})
+
+admin.component('edit-product',{
+  template: ``,
+  data(){
+    //return
+  },
+  props:[],
+  methods:{
+
+  }
+})
+
+admin.component('delete-product',{
+  template: ``,
+  data(){
+    //return
+  },
+  props:[],
+  methods:{
+
+  }
+})
+
+admin.component('submit-btn',{
+  template: `
+    <button :id="btnId" class="p-05" type="button" @click="btnSubmit"> {{ btnName }} </button>
+  `,
+  data(){
+    //return
+  },
+  props:['btnId', 'btnName'],
+  methods:{
+    btnSubmit(){
+
+    }
+  }
+})
+
+admin.component('cancel-btn',{
+  template: ``,
+  data(){
+    //return
+  },
+  props:[],
+  methods:{
+
+  }
+})
+
+admin.component('edit-btn',{
+  template: ``,
+  data(){
+    //return
+  },
+  props:[],
+  methods:{
+
+  }
+})
+
+admin.component('delete-btn',{
+  template: ``,
+  data(){
+    //return
+  },
+  props:[],
+  methods:{
+
+  }
+})
+
+
 
 admin.mount('#admin')
