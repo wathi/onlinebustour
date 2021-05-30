@@ -1,0 +1,134 @@
+nav {
+  background-color: #c7c7c7;
+}
+
+nav a{
+  color: #000;
+}
+
+form {
+  width: 500px;
+}
+
+.container {
+  width: auto;
+  padding-left: 5rem;
+  padding-right: 5rem;
+}
+
+/* Flex */
+.flex {
+  display: flex;  
+}
+
+.space-between {
+  justify-content: space-between; 
+}
+
+.space-around {
+  justify-content: space-around; 
+}
+
+.flex-center {
+  justify-content: center; 
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.flex-direction-column {
+  flex-direction: column;
+}
+
+.grid {
+  display: grid;
+  column-gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Decoration */
+.text-decoration-none {
+  text-decoration: none;
+}
+
+.list-style-none {
+  list-style: none;
+}
+
+.img-sm {
+  height: auto;
+  width: 100px;
+}
+
+.img-md {
+  height: auto;
+  width: 300px;
+}
+
+/* Margin & Padding */
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+.p-05 {
+ padding: 0.5rem;
+}
+
+.py-2 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* Width & Height */
+.w-10 {
+  width: 10rem;
+}
+
+.w-15 {
+  width: 15rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.button-link {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.button-link:hover {
+  color: #666;
+}
+
+/* Table */
+th,td {
+  width: 5rem;
+}
+
+/* Overlay Form */
+.overlay-form {
+  position: absolute;
+  top:0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  color: #FFF;
+  z-index: 2;
+  opacity: 1;
+  /* padding: 6px; */
+
+}
+
+.overlay-form .close-btn {
+  position: absolute;
+  /* top: 2rem; */
+  right: 6rem;
+  color: #FFF;
+  font-weight: 600;
+  font-size: 2rem;
+  cursor: pointer;
+}
