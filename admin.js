@@ -193,4 +193,4 @@ const admin = Vue.createApp({
   }
 })
 
-const vm = admin.mount('#admin')
+admin.mount('#admin')
