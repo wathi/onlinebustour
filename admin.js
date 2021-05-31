@@ -32,7 +32,7 @@ const admin = Vue.createApp({
   },
   methods: {
     checkLogin: function(){
-      let token = document.cookie.replace`(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
+      let token = document.cookie.replace(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1");
       axios.defaults.headers.common['Authorization'] = token;
     
       axios.post(`${this.apiUrl}/api/user/check`)
