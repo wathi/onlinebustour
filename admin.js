@@ -74,7 +74,7 @@ const admin = Vue.createApp({
       });
     },
     getProductAdmin: function(){
-      axios.get(`${this.apiUrl}/api/${this.apiPath}/products/all`)
+      axios.get(`${this.apiUrl}/api/${this.apiPath}/admin/products`)
       .then((res) => {
           console.log(res.data.products)
           res.data.products.forEach((product) => {
@@ -180,7 +180,7 @@ const admin = Vue.createApp({
 			});
     },
     tokenToHeader: function(){
-      let token = document.cookie.replace`(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
+      let token = document.cookie.replace(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1");
       axios.defaults.headers.common['Authorization'] = token;
     },
     render: function(){
