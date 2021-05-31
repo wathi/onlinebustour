@@ -3,13 +3,10 @@ const admin = Vue.createApp({
     return { 
       apiUrl:'https://vue3-course-api.hexschool.io',
       apiPath:'bustour',
-      // cookiename: "OnlineBusTour",
       currency: "日元",
       products: [],
-      isLoggedIn: false,
       addProductFormShow: false,
       editProductFormShow: false,
-      logginUser:{},
       tempProduct:{},
       emptyProduct:{
         category: "",
@@ -27,39 +24,19 @@ const admin = Vue.createApp({
     }
   },
   methods: {
-
-    authLogin: function(){
-      console.log("authloggin", this.logginUser)
-      axios.post(`${this.apiUrl}/admin/signin`, this.logginUser)
-      .then((res) => {
-        console.log(res.data);
-        if(res.data.success){
-          document.cookie = `OnlineBusTour=${res.data.token}; expires=${new Date(res.data.expired)}`;
-          this.isLoggedIn = true;
-          this.getProductAdmin();
-          console.log("login success")
-        } 
-        if(!res.data.success) {
-          this.isLoggedIn = false;
-          console.log("login fail")
-        }
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-      });
-    },
     getProductAdmin: function(){
-      axios.get(`${this.apiUrl}/api/${this.apiPath}/products/all`)
+      axios.get('https://vue3-course-api.hexschool.io/api/bustour/admin/products/all')
       .then((res) => {
-          console.log(res.data.products)
-          res.data.products.forEach((product) => {
-            this.products.push(product)
-          });
-          console.log(this.products)
+          console.log(res.data)
+          if(res.data.success){
+            res.data.products.forEach((product) => {
+              this.products.push(product)
+              console.log(this.products)
+            });
+          }
       })
       .catch((err) => {
-        console.log(err.response.data);
-        this.error();
+        console.dir(err);
       
       });
     },
@@ -142,10 +119,6 @@ const admin = Vue.createApp({
 				console.log(err.response.data);
 			});
     },
-
-    render: function(){
-      this.isLoggedIn = true;
-    },
   },
   mounted(){
     let token = document.cookie.replace`(/(?:(?:^|.*;\s*)OnlineBusTour\s*\=\s*([^;]*).*$)|^.*$/, "$1")`;
@@ -154,8 +127,10 @@ const admin = Vue.createApp({
     axios.post(`${this.apiUrl}/api/user/check`)
     .then((res) => {
       if(res.data.success){
-          console.log(res.data);
-          console.log("check success");
+          console.log(res.data, new Date(expired));
+          console.log("check success");          
+          this.getProductAdmin();
+
       } else {
         console.log(res.data);
         console.log("check fail");
@@ -164,6 +139,7 @@ const admin = Vue.createApp({
     .catch((err) => {
       console.log(err);
     });
+
   }
 })
 
@@ -188,7 +164,9 @@ admin.component('nav-bar',{
     </nav>
   `,
   data(){
-    //return 
+    return {
+
+    }
   },
   props: ['apiUrl'],
   methods:{
@@ -197,7 +175,7 @@ admin.component('nav-bar',{
 			.then((res) => {
 				console.log(res.data)
 				if(res.data.success){
-          document.cookie = `OnlineBusTour = ; expires = ${new Date()}`;
+          document.cookie = `OnlineBusTour = ; expires = ${new Date(1970-1-1)}`;
 				}
 			})
 			.catch((err) => {
@@ -217,35 +195,93 @@ admin.component('login-admin',{
           <input id="username" class="mb-2 p-05" name="username" type="email" v-model="logginUser.username">
           <label for="password">密碼</label>
           <input id="password" class="mb-2 p-05" name="password" type="password" v-model="logginUser.password">
-          <submit-btn btn-id="submit-login" class="p-05" type="button" v-on:click="authLogin" btn-name="登入"></submit-btn>
+          <submit-btn btn-id="submit-login" class="p-05" type="button" btn-name="登入" @click="authLogin"></submit-btn>
       </form>
     </div>
   `,
   data(){
     return {
+      logginUser:{
+        username:"",
+        password:""
+      },
     }
   },
-  props:[],
+  props: ['apiUrl'],
   methods:{
-    
+    authLogin: function(){
+      console.log("authloggin", this.logginUser)
+      axios.post(`${this.apiUrl}/admin/signin`, this.logginUser)
+      .then((res) => {
+        console.log(res.data);
+        if(res.data.success){
+          document.cookie = `OnlineBusTour=${res.data.token}; expires=${new Date(res.data.expired)}`;
+          console.log("login success", res.data.token, new Date(res.data.expired))
+          // window.onload("product.html")
+        } 
+        if(!res.data.success) {
+          console.log("login fail")
+        }
+      })
+      .catch((err) => {
+        console.dir(err);
+      });
+    },
   }
 })
 
-admin.component('get-product-admin',{
-  template: ``,
+admin.component('show-product-admin',{
+  template: `
+  <h3 class="text-center">後台管理</h3>
+  <add-btn btn-Id="add-product-btn" btnName="新增"></add-btn>
+  <div id="admin-product" class="flex flex-center" >
+    <table>
+      <thead>
+        <tr>
+          <th class="text-center">名稱</th>
+          <th class="text-center">說明</th>
+          <th class="text-center">圖片</th>
+          <th class="text-center">原價</th>
+          <th class="text-center">現價</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <template v-for="product in products" :key="product.id">
+          <tr>
+            <td class="text-center"><h3>{{ product.content }}</h3></td>
+            <td class="text-center">{{ product.description }}</td>
+            <td class="text-center"><img class="img-sm" :src="product.imageUrl" alt=""></td>
+            <td class="text-center">{{ product.origin_price }}{{ currency }}</td>   
+            <td class="text-center">{{ product.price }}{{ currency }}</td>
+            <td class="text-center"><button value="product.id" class="edit-product" @click="getEditProduct(product)">修改</button></td>     
+            <td class="text-center"><button value="product.id" class="delete-product" @click="deleteProduct(product.id)">刪除</button></td>     
+          </tr>
+        </template> 
+      </tbody>
+    </table>
+  </div>
+  
+  `,
   data(){
-    //return
+    return {
+
+    }
   },
-  props:[],
+  props:['products','currency'],
   methods:{
     
   }
 })
 
 admin.component('add-product',{
-  template: ``,
+  template: `
+  `,
   data(){
-    //return
+    return {
+
+    }
   },
   props:[],
   methods:{
@@ -256,7 +292,9 @@ admin.component('add-product',{
 admin.component('edit-product',{
   template: ``,
   data(){
-    //return
+    return {
+
+    }
   },
   props:[],
   methods:{
@@ -267,7 +305,9 @@ admin.component('edit-product',{
 admin.component('delete-product',{
   template: ``,
   data(){
-    //return
+    return {
+
+    }
   },
   props:[],
   methods:{
@@ -277,23 +317,25 @@ admin.component('delete-product',{
 
 admin.component('submit-btn',{
   template: `
-    <button :id="btnId" class="p-05" type="button" @click="btnSubmit"> {{ btnName }} </button>
+    <button :id="btnId" class="p-05" type="button"> {{ btnName }} </button>
   `,
   data(){
-    //return
+    return {
+
+    }
   },
   props:['btnId', 'btnName'],
   methods:{
-    btnSubmit(){
 
-    }
   }
 })
 
 admin.component('cancel-btn',{
   template: ``,
   data(){
-    //return
+    return {
+
+    }
   },
   props:[],
   methods:{
@@ -301,10 +343,29 @@ admin.component('cancel-btn',{
   }
 })
 
+admin.component('add-btn',{
+  template: `
+    <button id="btnId" class="mb-2" type="button" @click="check"> {{ btnName }} </button>
+  `,
+  data(){
+    return {
+
+    }
+  },
+  props:['btnId', 'btnName'],
+  methods:{
+    check: function(){
+      console.log(new Date());
+    }
+  }
+})
+
 admin.component('edit-btn',{
   template: ``,
   data(){
-    //return
+    return {
+
+    }
   },
   props:[],
   methods:{
@@ -315,7 +376,9 @@ admin.component('edit-btn',{
 admin.component('delete-btn',{
   template: ``,
   data(){
-    //return
+    return {
+
+    }
   },
   props:[],
   methods:{

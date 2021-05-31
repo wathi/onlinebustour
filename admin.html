@@ -20,47 +20,12 @@
   <div id="admin" class="container">
     <nav-bar :api-Url="apiUrl"></nav-bar>
     <main>
-      <login-admin></login-admin>
+      <login-admin :api-Url="apiUrl"></login-admin>
+      <show-product-admin :products="products" :currency="currency"></show-product-admin>
 
 
-
-
-
-      
       <div id="backend" v-if="isLoggedIn">
-        <h3 class="text-center">後台管理</h3>
-        <button id="add-product" class="mb-2" type="button" @click="showAddProductForm">新增</button>
 
-        <div id="admin-product" class="flex flex-center" >
-
-          <table>
-            <thead>
-              <tr>
-                <th class="text-center">名稱</th>
-                <th class="text-center">說明</th>
-                <th class="text-center">圖片</th>
-                <th class="text-center">原價</th>
-                <th class="text-center">現價</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-for="product in products" :key="product.id">
-                <tr>
-                  <td class="text-center"><h3>{{ product.content }}</h3></td>
-                  <td class="text-center">{{ product.description }}</td>
-                  <td class="text-center"><img class="img-sm" :src="product.imageUrl" alt=""></td>
-                  <td class="text-center">{{ product.origin_price }}{{ currency }}</td>   
-                  <td class="text-center">{{ product.price }}{{ currency }}</td>
-                  <td class="text-center"><button value="product.id" class="edit-product" @click="getEditProduct(product)">修改</button></td>     
-                  <td class="text-center"><button value="product.id" class="delete-product" @click="deleteProduct(product.id)">刪除</button></td>     
-
-                </tr>
-              </template> 
-            </tbody>
-          </table>
-        </div>
 
         <!-- Add Product -->
         <div id="add-product-form" class="flex flex-direction-column align-items-center overlay-form" v-if="addProductFormShow">
